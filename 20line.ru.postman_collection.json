@@ -1,0 +1,458 @@
+{
+	"info": {
+		"_postman_id": "267fb77a-e394-4ad1-8e7f-e077803bbfdb",
+		"name": "20line.ru",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40728407"
+	},
+	"item": [
+		{
+			"name": "Главная",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://20line.ru",
+					"protocol": "https",
+					"host": [
+						"20line",
+						"ru"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Футболка",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseText = pm.response.text();\r",
+							"var match = responseText.match(/\"bitrix_sessid\":\"(.*?)\"/);\r",
+							"//console.log(match);\r",
+							"if (match) {\r",
+							"    var bitrix_sessid = match[1];\r",
+							"    pm.collectionVariables.set(\"BX_SessId\", bitrix_sessid)\r",
+							"    console.log(\"BX_SessId найден:\", bitrix_sessid);\r",
+							"} else {\r",
+							"    console.log(\"Не удалось найти BX.message в ответе\");\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://20line.ru/catalog/futbolka-iz-khlopka-20line-1820362.html",
+					"protocol": "https",
+					"host": [
+						"20line",
+						"ru"
+					],
+					"path": [
+						"catalog",
+						"futbolka-iz-khlopka-20line-1820362.html"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Добавить в корзину",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json; charset=UTF-8",
+						"type": "text"
+					},
+					{
+						"key": "x-bitrix-csrf-token",
+						"value": "{{BX_SessId}}",
+						"type": "text"
+					},
+					{
+						"key": "x-bitrix-site-id",
+						"value": "s1",
+						"type": "text"
+					},
+					{
+						"key": "accept",
+						"value": "*/*",
+						"type": "text"
+					},
+					{
+						"key": "bx-ajax",
+						"value": "true",
+						"type": "text"
+					},
+					{
+						"key": "origin",
+						"value": "https://20line.ru",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "id",
+							"value": "1820541",
+							"type": "text"
+						},
+						{
+							"key": "productId",
+							"value": "1820362",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://20line.ru/bitrix/services/main/ajax.php?mode=class&c=ega%3Afavorites&action=addToBasket",
+					"protocol": "https",
+					"host": [
+						"20line",
+						"ru"
+					],
+					"path": [
+						"bitrix",
+						"services",
+						"main",
+						"ajax.php"
+					],
+					"query": [
+						{
+							"key": "mode",
+							"value": "class"
+						},
+						{
+							"key": "c",
+							"value": "ega%3Afavorites"
+						},
+						{
+							"key": "action",
+							"value": "addToBasket"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Корзина",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseText = pm.response.text();\r",
+							"var itemInBasket = responseText.includes('data-offer-id=\"1820541\"');\r",
+							"if (itemInBasket) {\r",
+							"    pm.test(\"Товар присутствует в корзине\", function() {\r",
+							"        console.log(\"Товар с data-offer-id=1820541 найден в корзине.\");\r",
+							"    });\r",
+							"} else {\r",
+							"    pm.test(\"Товар отсутствует в корзине\", function() {\r",
+							"        console.log(\"Товар с data-offer-id=1820541 не найден в корзине.\");\r",
+							"    });\r",
+							"}\r",
+							"var match = responseText.match(/removeItemFromCart\\((\\d+)\\)/);\r",
+							"console.log(match);\r",
+							"if (match) {\r",
+							"    var remove_id = match[1];\r",
+							"    pm.collectionVariables.set(\"removeItemFromCart\", remove_id)\r",
+							"    console.log(\"removeItemFromCart найден:\", remove_id);\r",
+							"} else {\r",
+							"    console.log(\"Не удалось найти removeItemFromCart в ответе\");\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json; charset=UTF-8",
+						"type": "text"
+					},
+					{
+						"key": "x-bitrix-csrf-token",
+						"value": "{{BX_SessId}}",
+						"type": "text"
+					},
+					{
+						"key": "x-bitrix-site-id",
+						"value": "s1",
+						"type": "text"
+					},
+					{
+						"key": "accept",
+						"value": "*/*",
+						"type": "text"
+					},
+					{
+						"key": "bx-ajax",
+						"value": "true",
+						"type": "text"
+					},
+					{
+						"key": "origin",
+						"value": "https://20line.ru",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://20line.ru/basket/",
+					"protocol": "https",
+					"host": [
+						"20line",
+						"ru"
+					],
+					"path": [
+						"basket",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Удалить из корзины",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json; charset=UTF-8",
+						"type": "text"
+					},
+					{
+						"key": "x-bitrix-csrf-token",
+						"value": "{{BX_SessId}}",
+						"type": "text"
+					},
+					{
+						"key": "x-bitrix-site-id",
+						"value": "s1",
+						"type": "text"
+					},
+					{
+						"key": "accept",
+						"value": "*/*",
+						"type": "text"
+					},
+					{
+						"key": "bx-ajax",
+						"value": "true",
+						"type": "text"
+					},
+					{
+						"key": "origin",
+						"value": "https://20line.ru",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "id",
+							"value": "{{removeItemFromCart}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://20line.ru/bitrix/services/main/ajax.php?mode=class&c=ega%3Abasket&action=deleteItem",
+					"protocol": "https",
+					"host": [
+						"20line",
+						"ru"
+					],
+					"path": [
+						"bitrix",
+						"services",
+						"main",
+						"ajax.php"
+					],
+					"query": [
+						{
+							"key": "mode",
+							"value": "class"
+						},
+						{
+							"key": "c",
+							"value": "ega%3Abasket"
+						},
+						{
+							"key": "action",
+							"value": "deleteItem"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Корзина проверка",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseText = pm.response.text();\r",
+							"var itemInBasket = responseText.includes('data-offer-id=\"1820541\"');\r",
+							"if (itemInBasket) {\r",
+							"    pm.test(\"Товар присутствует в корзине\", function() {\r",
+							"        console.log(\"Товар с data-offer-id=1820541 найден в корзине.\");\r",
+							"    });\r",
+							"} else {\r",
+							"    pm.test(\"Товар отсутствует в корзине\", function() {\r",
+							"        console.log(\"Товар с data-offer-id=1820541 не найден в корзине.\");\r",
+							"    });\r",
+							"}\r",
+							"var match = responseText.match(/removeItemFromCart\\((\\d+)\\)/);\r",
+							"console.log(match);\r",
+							"if (match) {\r",
+							"    var remove_id = match[1];\r",
+							"    pm.collectionVariables.set(\"removeItemFromCart\", remove_id)\r",
+							"    console.log(\"removeItemFromCart найден:\", remove_id);\r",
+							"} else {\r",
+							"    console.log(\"Не удалось найти removeItemFromCart в ответе\");\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json; charset=UTF-8",
+						"type": "text"
+					},
+					{
+						"key": "x-bitrix-csrf-token",
+						"value": "{{BX_SessId}}",
+						"type": "text"
+					},
+					{
+						"key": "x-bitrix-site-id",
+						"value": "s1",
+						"type": "text"
+					},
+					{
+						"key": "accept",
+						"value": "*/*",
+						"type": "text"
+					},
+					{
+						"key": "bx-ajax",
+						"value": "true",
+						"type": "text"
+					},
+					{
+						"key": "origin",
+						"value": "https://20line.ru",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://20line.ru/basket/",
+					"protocol": "https",
+					"host": [
+						"20line",
+						"ru"
+					],
+					"path": [
+						"basket",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BX_SessId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "removeItemFromCart",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
